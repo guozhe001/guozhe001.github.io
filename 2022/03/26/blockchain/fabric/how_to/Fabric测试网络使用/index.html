@@ -13,14 +13,14 @@
 <meta property="og:site_name" content="滴水成涓">
 <meta property="og:description" content="Fabric测试网络使用 测试网络设置环境变量记录 Org1： 1234567export PATH&#x3D;$&amp;#123;PWD&amp;#125;&#x2F;..&#x2F;bin:$&amp;#123;PWD&amp;#125;:$PATHexport FABRIC_CFG_PATH&#x3D;$PWD&#x2F;..&#x2F;config&#x2F;export CORE_PEER_TLS_ENABLED&#x3D;trueexport CORE_PEER_LOCALMSPID&#x3D;&amp;quo">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://gitee.com/guozhe001/images/raw/master/image-20201214185835819.png">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/guozhe001/oss/image-20201214185835819.png">
 <meta property="article:published_time" content="2022-03-26T06:37:54.775Z">
-<meta property="article:modified_time" content="2022-03-26T06:37:54.775Z">
+<meta property="article:modified_time" content="2022-04-08T03:49:57.680Z">
 <meta property="article:author" content="guozhe">
 <meta property="article:tag" content="blockchain">
 <meta property="article:tag" content="Hyperledger-Fabric">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://gitee.com/guozhe001/images/raw/master/image-20201214185835819.png">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/guozhe001/oss/image-20201214185835819.png">
     
     
       
@@ -88,7 +88,7 @@
         <li><a class="icon" href="/2022/03/26/blockchain/fabric/how_to/Hyperledger-Fabric%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
-        <li><a class="icon" href="/2022/03/26/blockchain/fabric/how_to/%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%B0%E7%9A%84channel/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" href="/2022/03/26/blockchain/fabric/how_to/%E5%9C%A8Fabric%E4%B8%AD%E4%BA%A4%E6%98%93%E5%8F%97%E4%BF%9D%E6%8A%A4%E7%9A%84%E8%B5%84%E4%BA%A7/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -203,7 +203,7 @@
 <p>这个脚本启动两个peer节点，一个ordering节点。这个脚本不会创建channel，我的脚本运行结果如下：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Creating network &quot;net_test&quot; with the default driver</span><br><span class="line">Creating volume &quot;net_orderer.example.com&quot; with default driver</span><br><span class="line">Creating volume &quot;net_peer0.org1.example.com&quot; with default driver</span><br><span class="line">Creating volume &quot;net_peer0.org2.example.com&quot; with default driver</span><br><span class="line">Creating orderer.example.com    ... done</span><br><span class="line">Creating peer0.org1.example.com ... done</span><br><span class="line">Creating peer0.org2.example.com ... done</span><br><span class="line">CONTAINER ID   IMAGE                               COMMAND                  CREATED        STATUS                    PORTS                              NAMES</span><br><span class="line">31c36a007eb0   hyperledger/fabric-peer:latest      &quot;peer node start&quot;        1 second ago   Up Less than a second     7051/tcp, 0.0.0.0:9051-&gt;9051/tcp   peer0.org2.example.com</span><br><span class="line">42f314195c64   hyperledger/fabric-orderer:latest   &quot;orderer&quot;                1 second ago   Up Less than a second     0.0.0.0:7050-&gt;7050/tcp             orderer.example.com</span><br><span class="line">de62f2f44a03   hyperledger/fabric-peer:latest      &quot;peer node start&quot;        1 second ago   Up Less than a second     0.0.0.0:7051-&gt;7051/tcp             peer0.org1.example.com</span><br><span class="line">e9af4c11538c   cordite/network-map:latest          &quot;/usr/bin/java -cp /…&quot;   5 days ago     Exited (143) 3 days ago                                      network-map</span><br><span class="line">5128423bb8d7   redis:5.0                           &quot;docker-entrypoint.s…&quot;   5 months ago   Exited (0) 7 weeks ago                                       redis</span><br><span class="line">6796aadc5173   mysql                               &quot;docker-entrypoint.s…&quot;   7 months ago   Exited (0) 7 weeks ago                                       mysql</span><br><span class="line">66c3ac55f920   neo4j                               &quot;/sbin/tini -g -- /d…&quot;   7 months ago   Exited (0) 7 months ago</span><br></pre></td></tr></table></figure>
 <p>docker面板显示如下：</p>
-<p><img src="https://gitee.com/guozhe001/images/raw/master/image-20201214185835819.png" alt="image-20201214185835819"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/guozhe001/oss/image-20201214185835819.png" alt="image-20201214185835819"></p>
 <p><a target="_blank" rel="noopener" href="https://hyperledger-fabric.readthedocs.io/en/release-2.2/peers/peers.html">Peers</a>是Fabric network的组成部分，Peers存储区块链账本并在提交之前验证交易。Peers运行包含业务逻辑的智能合约，智能合约用于管理区块链上的账本。</p>
 <p>在网络上的每个Peer都属于一个团体，上图显示的测试网络中的两个peer分别属于组织<code>peer0.org1.example.com</code>和组织<code>peer0.org2.example.com</code>。</p>
 <p>每个Fabric network同样包含<a target="_blank" rel="noopener" href="https://hyperledger-fabric.readthedocs.io/en/release-2.2/orderer/ordering_service.html">ordering service</a>，Peers在验证交易和提交交易到区块链的时候，他们不自己决定交易的顺序和区块中包含哪些交易。在分布式网络中，peers可能分布的特别远，所以让peers对交易顺序达成共识的成本是很高的。</p>
