@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="本文档是参考官方文档实践的记录，如有不当支持欢迎指正。参考文档： https:&#x2F;&#x2F;geth.ethereum.org&#x2F;docs&#x2F;interface&#x2F;private-network 环境准备 安装geth等工具 参考文档：Install on Ubuntu via PPAs 创建工作目录 创建工作目录gethpoa，并在此目录下创建另外两个node节点目录。完成之后的目录结构如下：创建账户 1234">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何搭建一个私有以太坊网络">
+<meta property="og:url" content="https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/index.html">
+<meta property="og:site_name" content="滴水成涓">
+<meta property="og:description" content="本文档是参考官方文档实践的记录，如有不当支持欢迎指正。参考文档： https:&#x2F;&#x2F;geth.ethereum.org&#x2F;docs&#x2F;interface&#x2F;private-network 环境准备 安装geth等工具 参考文档：Install on Ubuntu via PPAs 创建工作目录 创建工作目录gethpoa，并在此目录下创建另外两个node节点目录。完成之后的目录结构如下：创建账户 1234">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/guozhe001/oss/image-20220407204329123.png">
+<meta property="article:published_time" content="2024-11-22T06:32:06.492Z">
+<meta property="article:modified_time" content="2024-11-22T06:32:06.492Z">
+<meta property="article:author" content="guozhe">
+<meta property="article:tag" content="blockchain">
+<meta property="article:tag" content="ethereum">
+<meta property="article:tag" content="私有以太坊网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/guozhe001/oss/image-20220407204329123.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>如何搭建一个私有以太坊网络</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="滴水成涓" type="application/atom+xml">
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/guozhe001">项目</a></li>
+         
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E5%BC%80%E5%8F%91%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E7%94%A8go-ethereum%E8%BF%90%E8%90%A5%E4%B8%80%E4%B8%AA%E7%A7%81%E6%9C%89%E5%8C%BA%E5%9D%97%E9%93%BE%E7%BD%91%E7%BB%9C/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&text=如何搭建一个私有以太坊网络"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&title=如何搭建一个私有以太坊网络"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&is_video=false&description=如何搭建一个私有以太坊网络"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=如何搭建一个私有以太坊网络&body=Check out this article: https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&title=如何搭建一个私有以太坊网络"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&title=如何搭建一个私有以太坊网络"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&title=如何搭建一个私有以太坊网络"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&title=如何搭建一个私有以太坊网络"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&name=如何搭建一个私有以太坊网络&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&t=如何搭建一个私有以太坊网络"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.</span> <span class="toc-text">环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85geth%E7%AD%89%E5%B7%A5%E5%85%B7"><span class="toc-number">1.1.</span> <span class="toc-text">安装geth等工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95"><span class="toc-number">1.2.</span> <span class="toc-text">创建工作目录</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8puppeth%E5%88%9B%E5%BB%BA%E5%88%9B%E4%B8%96%E5%8C%BA%E5%9D%97%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">使用puppeth创建创世区块的配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%88%9B%E4%B8%96%E5%8C%BA%E5%9D%97%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">初始化创世区块配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC%E8%8A%82%E7%82%B9"><span class="toc-number">4.</span> <span class="toc-text">启动引导节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E6%88%90%E5%91%98%E8%8A%82%E7%82%B9"><span class="toc-number">5.</span> <span class="toc-text">启动成员节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81"><span class="toc-number">6.</span> <span class="toc-text">验证</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEmatemask"><span class="toc-number">6.1.</span> <span class="toc-text">配置matemask</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%91%E9%80%81%E4%B8%80%E4%B8%AA%E4%BA%A4%E6%98%93"><span class="toc-number">6.2.</span> <span class="toc-text">发送一个交易</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="toc-number">6.3.</span> <span class="toc-text">错误处理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9B%A0%E4%B8%BA%E6%B2%A1%E6%9C%89%E5%90%AF%E7%94%A8rpcapi%E6%8E%A5%E5%8F%A3%EF%BC%8C%E5%9B%A0%E6%AD%A4%E4%BD%BF%E7%94%A8matemask%E6%97%A0%E6%B3%95%E9%85%8D%E7%BD%AE%E7%A7%81%E6%9C%89%E7%BD%91%E7%BB%9C"><span class="toc-number">6.3.1.</span> <span class="toc-text">因为没有启用rpcapi接口，因此使用matemask无法配置私有网络</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95%EF%BC%8C%E5%90%AF%E7%94%A8rpcapi%E5%8A%9F%E8%83%BD"><span class="toc-number">6.3.2.</span> <span class="toc-text">解决方法，启用rpcapi功能</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8F%91%E9%80%81ETH%E5%A4%B1%E8%B4%A5%EF%BC%8C%E6%97%A5%E5%BF%97%E6%8A%A5%E9%94%99%EF%BC%9Aerr-%E2%80%9Cheader-not-found%E2%80%9D"><span class="toc-number">6.3.3.</span> <span class="toc-text">发送ETH失败，日志报错：err&#x3D;“header not found”</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#WARN-04-05-14-46-19-861-Block-sealing-failed-err-%E2%80%9Csigned-recently-must-wait-for-others%E2%80%9D"><span class="toc-number">6.3.4.</span> <span class="toc-text">WARN [04-05|14:46:19.861] Block sealing failed                     err&#x3D;“signed recently, must wait for others”</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Fatal-Account-unlock-with-HTTP-access-is-forbidden"><span class="toc-number">6.3.5.</span> <span class="toc-text">Fatal: Account unlock with HTTP access is forbidden!</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E8%AE%B0%E5%BD%95%EF%BC%9AWARN-04-05-13-28-32-568-Block-sealing-failed-err-%E2%80%9Cunauthorized-signer%E2%80%9D"><span class="toc-number">6.3.6.</span> <span class="toc-text">错误记录：WARN [04-05|13:28:32.568] Block sealing failed                     err&#x3D;“unauthorized signer”</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E7%BB%AD%E5%B7%A5%E4%BD%9C"><span class="toc-number">7.</span> <span class="toc-text">后续工作</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        如何搭建一个私有以太坊网络
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">guozhe</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-11-22T06:32:06.492Z" itemprop="datePublished">2024-11-22</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/%E5%8C%BA%E5%9D%97%E9%93%BE/">blockchain</a> › <a class="category-link" href="/categories/%E5%8C%BA%E5%9D%97%E9%93%BE/ethereum/">ethereum</a> › <a class="category-link" href="/categories/%E5%8C%BA%E5%9D%97%E9%93%BE/ethereum/HOW-TO/">HOW-TO</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/" rel="tag">blockchain</a>, <a class="tag-link-link" href="/tags/ethereum/" rel="tag">ethereum</a>, <a class="tag-link-link" href="/tags/%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/" rel="tag">私有以太坊网络</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>本文档是参考官方文档实践的记录，如有不当支持欢迎指正。参考文档：</p>
+<p><a target="_blank" rel="noopener" href="https://geth.ethereum.org/docs/interface/private-network">https://geth.ethereum.org/docs/interface/private-network</a></p>
+<h3 id="环境准备">环境准备</h3>
+<h4 id="安装geth等工具">安装geth等工具</h4>
+<p>参考文档：<a target="_blank" rel="noopener" href="https://geth.ethereum.org/docs/install-and-build/installing-geth#install-on-ubuntu-via-ppas">Install on Ubuntu via PPAs</a></p>
+<h4 id="创建工作目录">创建工作目录</h4>
+<p>创建工作目录<code>gethpoa</code>，并在此目录下创建另外两个node节点目录。完成之后的目录结构如下：创建账户</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash">geth --datadir data account new</span></span><br><span class="line">INFO [04-07|16:48:50.857] Maximum peer count                       ETH=50 LES=0 total=50</span><br><span class="line">INFO [04-07|16:48:50.857] Smartcard socket not found, disabling    err=&quot;stat /run/pcscd/pcscd.comm: no such file or directory&quot;</span><br><span class="line">Your new account is locked with a password. Please give a password. Do not forget this password.</span><br><span class="line">Password:</span><br><span class="line">Repeat password:</span><br><span class="line"></span><br><span class="line">Your new key was generated</span><br><span class="line"></span><br><span class="line">Public address of the key:   0x4852C36DeC855E487D46ddDD015A92612dE5Bf20</span><br><span class="line">Path of the secret key file: data/keystore/UTC--2022-04-07T08-48-58.777243596Z--4852c36dec855e487d46dddd015a92612de5bf20</span><br><span class="line"></span><br><span class="line">- You can share your public address with anyone. Others need it to interact with you.</span><br><span class="line">- You must NEVER share the secret key with anyone! The key controls access to your funds!</span><br><span class="line">- You must BACKUP your key file! Without the key, it&#x27;s impossible to access account funds!</span><br><span class="line">- You must REMEMBER your password! Without the password, it&#x27;s impossible to decrypt the key!</span><br></pre></td></tr></table></figure>
+<p>执行完以上操作之后的目录结构如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tree gethpoa/</span></span><br><span class="line">gethpoa/</span><br><span class="line">├── node1</span><br><span class="line">│   └── data</span><br><span class="line">│       └── keystore</span><br><span class="line">│           └── UTC--2022-04-07T11-43-40.475412645Z--7adc4a5a65ab33595ade0ed15903e8c406f69230</span><br><span class="line">└── node2</span><br><span class="line">    └── data</span><br><span class="line">        └── keystore</span><br><span class="line">            └── UTC--2022-04-07T08-50-53.751660870Z--0691e168e8cc151a76a04705290702631a86c948</span><br></pre></td></tr></table></figure>
+<h3 id="使用puppeth创建创世区块的配置">使用puppeth创建创世区块的配置</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> puppeth</span></span><br><span class="line">+-----------------------------------------------------------+</span><br><span class="line">| Welcome to puppeth, your Ethereum private network manager |</span><br><span class="line">|                                                           |</span><br><span class="line">| This tool lets you create a new Ethereum network down to  |</span><br><span class="line">| the genesis block, bootnodes, miners and ethstats servers |</span><br><span class="line">| without the hassle that it would normally entail.         |</span><br><span class="line">|                                                           |</span><br><span class="line">| Puppeth uses SSH to dial in to remote servers, and builds |</span><br><span class="line">| its network components out of Docker containers using the |</span><br><span class="line">| docker-compose toolset.                                   |</span><br><span class="line">+-----------------------------------------------------------+</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 首先指定一个名称</span></span><br><span class="line">Please specify a network name to administer (no spaces, hyphens or capital letters please)</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> blockpoa</span></span><br><span class="line"></span><br><span class="line">Sweet, you can set this via --network=blockpoa next time!</span><br><span class="line"></span><br><span class="line">INFO [04-07|19:55:26.726] Administering Ethereum network           name=blockpoa</span><br><span class="line">INFO [04-07|19:55:26.732] No remote machines to gather stats from</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 然后会提示选择要做的操作，我这里选择配置一个新的创世区块</span></span><br><span class="line">What would you like to do? (default = stats)</span><br><span class="line"> 1. Show network stats</span><br><span class="line"> 2. Configure new genesis</span><br><span class="line"> 3. Track new remote server</span><br><span class="line"> 4. Deploy network components</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> 2</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建创世区块配置还是导入已有的创世区块配置？</span> </span><br><span class="line">What would you like to do? (default = create)</span><br><span class="line"> 1. Create new genesis from scratch</span><br><span class="line"> 2. Import already existing genesis</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> 1</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 选择共识引擎，这里选择Clique</span></span><br><span class="line">Which consensus engine to use? (default = clique)</span><br><span class="line"> 1. Ethash - proof-of-work</span><br><span class="line"> 2. Clique - proof-of-authority</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> 2</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 多少秒出一个区块，默认时15秒</span></span><br><span class="line">How many seconds should blocks take? (default = 15)</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> 3</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 哪些账户允许打包区块？当我选两个账户时报错：signed recently, must <span class="built_in">wait</span> <span class="keyword">for</span> others，因此这里只选了一个账户可以打包。</span></span><br><span class="line">Which accounts are allowed to seal? (mandatory at least one)</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> 0x7adC4A5a65ab33595adE0ed15903e8c406f69230</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> 0x</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 哪些账户需要预先初始化一部分资金？</span></span><br><span class="line">Which accounts should be pre-funded? (advisable at least one)</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> 0x7adC4A5a65ab33595adE0ed15903e8c406f69230</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> 0x0691e168E8cC151a76a04705290702631A86C948</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> 0x</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 这些地址需要初始化1wei的资金吗？选择的yes，其实对这块不太了解为什么</span></span><br><span class="line">Should the precompile-addresses (0x1 .. 0xff) be pre-funded with 1 wei? (advisable yes)</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> yes</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 指定网络ID，我这里直接随机</span></span><br><span class="line">Specify your chain/network ID if you want an explicit one (default = random)</span><br><span class="line"><span class="meta">&gt;</span></span><br><span class="line"><span class="bash">INFO [04-07|19:59:20.325] Configured new genesis block</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 经过以上的配置，已经配置好了，现在再次让我选择要做什么操作。我这里选择2:管理已经存在的创世区块配置</span></span><br><span class="line">What would you like to do? (default = stats)</span><br><span class="line"> 1. Show network stats</span><br><span class="line"> 2. Manage existing genesis</span><br><span class="line"> 3. Track new remote server</span><br><span class="line"> 4. Deploy network components</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> 2</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 选择管理现有的创世区块配置之后，会出现下面三个选项，分别是修改，导出和删除；我这里选择导出创世区块的配置。</span></span><br><span class="line"> 1. Modify existing configurations</span><br><span class="line"> 2. Export genesis configurations</span><br><span class="line"> 3. Remove genesis configuration</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> 2</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 选择导出之后会询问导出到哪个文件夹，选择默认的当前文件夹； 下面有两个是报错，从字面意思理解是这两个配置不支持poa的共识协议，所以这次忽略。</span></span><br><span class="line">Which folder to save the genesis specs into? (default = current)</span><br><span class="line">  Will create blockpoa.json, blockpoa-aleth.json, blockpoa-harmony.json, blockpoa-parity.json</span><br><span class="line"><span class="meta">&gt;</span></span><br><span class="line"><span class="bash">INFO [04-07|19:59:47.758] Saved native genesis chain spec          path=blockpoa.json</span></span><br><span class="line">ERROR[04-07|19:59:47.758] Failed to create Aleth chain spec        err=&quot;unsupported consensus engine&quot;</span><br><span class="line">ERROR[04-07|19:59:47.758] Failed to create Parity chain spec       err=&quot;unsupported consensus engine&quot;</span><br><span class="line">INFO [04-07|19:59:47.761] Saved genesis chain spec                 client=harmony path=blockpoa-harmony.json</span><br><span class="line"></span><br><span class="line">What would you like to do? (default = stats)</span><br><span class="line"> 1. Show network stats</span><br><span class="line"> 2. Manage existing genesis</span><br><span class="line"> 3. Track new remote server</span><br><span class="line"> 4. Deploy network components</span><br></pre></td></tr></table></figure>
+<p>配置完成之后的创世区块配置json文件如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;config&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;chainId&quot;</span>: <span class="number">3030</span>,</span><br><span class="line">    <span class="attr">&quot;homesteadBlock&quot;</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">&quot;eip150Block&quot;</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">&quot;eip150Hash&quot;</span>: <span class="string">&quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;eip155Block&quot;</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">&quot;eip158Block&quot;</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">&quot;byzantiumBlock&quot;</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">&quot;constantinopleBlock&quot;</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">&quot;petersburgBlock&quot;</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">&quot;istanbulBlock&quot;</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">&quot;clique&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;period&quot;</span>: <span class="number">3</span>,</span><br><span class="line">      <span class="attr">&quot;epoch&quot;</span>: <span class="number">30000</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;nonce&quot;</span>: <span class="string">&quot;0x0&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;timestamp&quot;</span>: <span class="string">&quot;0x624ed1f0&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;extraData&quot;</span>: <span class="string">&quot;0x00000000000000000000000000000000000000000000000000000000000000007adc4a5a65ab33595ade0ed15903e8c406f692300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;gasLimit&quot;</span>: <span class="string">&quot;0x47b760&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;difficulty&quot;</span>: <span class="string">&quot;0x1&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;mixHash&quot;</span>: <span class="string">&quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;coinbase&quot;</span>: <span class="string">&quot;0x0000000000000000000000000000000000000000&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;alloc&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;0000000000000000000000000000000000000000&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;balance&quot;</span>: <span class="string">&quot;0x1&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">&quot;0691e168e8cc151a76a04705290702631a86c948&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;balance&quot;</span>: <span class="string">&quot;0x200000000000000000000000000000000000000000000000000000000000000&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">&quot;7adc4a5a65ab33595ade0ed15903e8c406f69230&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;balance&quot;</span>: <span class="string">&quot;0x200000000000000000000000000000000000000000000000000000000000000&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;number&quot;</span>: <span class="string">&quot;0x0&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;gasUsed&quot;</span>: <span class="string">&quot;0x0&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;parentHash&quot;</span>: <span class="string">&quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;baseFeePerGas&quot;</span>: <span class="literal">null</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>导出创世区块配置之后的目录结构如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tree gethpoa/</span></span><br><span class="line">gethpoa/</span><br><span class="line">├── blockpoa-harmony.json</span><br><span class="line">├── blockpoa.json</span><br><span class="line">├── node1</span><br><span class="line">│   └── data</span><br><span class="line">│       └── keystore</span><br><span class="line">│           └── UTC--2022-04-07T11-43-40.475412645Z--7adc4a5a65ab33595ade0ed15903e8c406f69230</span><br><span class="line">└── node2</span><br><span class="line">    └── data</span><br><span class="line">        └── keystore</span><br><span class="line">            └── UTC--2022-04-07T08-50-53.751660870Z--0691e168e8cc151a76a04705290702631a86c948</span><br></pre></td></tr></table></figure>
+<h3 id="初始化创世区块配置">初始化创世区块配置</h3>
+<p>初始化创世区块配置(分别在每个节点目录下执行此命令)</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> geth --datadir data init ../blockpoa.json</span></span><br><span class="line">INFO [04-07|20:22:34.955] Maximum peer count                       ETH=50 LES=0 total=50</span><br><span class="line">INFO [04-07|20:22:34.955] Smartcard socket not found, disabling    err=&quot;stat /run/pcscd/pcscd.comm: no such file or directory&quot;</span><br><span class="line">INFO [04-07|20:22:34.957] Set global gas cap                       cap=50,000,000</span><br><span class="line">INFO [04-07|20:22:34.957] Allocated cache and file handles         database=/home/guozhe/work/blockchain/gethpoa/node1/data/geth/chaindata cache=16.00MiB handles=16</span><br><span class="line">INFO [04-07|20:22:34.975] Writing custom genesis block</span><br><span class="line">INFO [04-07|20:22:34.984] Persisted trie from memory database      nodes=357 size=50.70KiB time=1.847678ms gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=0.00B</span><br><span class="line">INFO [04-07|20:22:34.986] Successfully wrote genesis state         database=chaindata hash=9d6e3d..f10d54</span><br><span class="line">INFO [04-07|20:22:34.986] Allocated cache and file handles         database=/home/guozhe/work/blockchain/gethpoa/node1/data/geth/lightchaindata cache=16.00MiB handles=16</span><br><span class="line">INFO [04-07|20:22:35.004] Writing custom genesis block</span><br><span class="line">INFO [04-07|20:22:35.012] Persisted trie from memory database      nodes=357 size=50.70KiB time=2.258964ms gcnodes=0 gcsize=0.00B gctime=0s livenodes=1 livesize=0.00B</span><br><span class="line">INFO [04-07|20:22:35.013] Successfully wrote genesis state         database=lightchaindata hash=9d6e3d..f10d54</span><br></pre></td></tr></table></figure>
+<h3 id="启动引导节点">启动引导节点</h3>
+<p>创建一个目录<code>bnode</code>,然后进入到此目录执行<code>bootnode -genkey boot.key</code>命令生成<code>boot.key</code>。执行完成之后，工作目录下会有<code>boot.key</code>文件，整体目录结构如下:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> tree gethpoa/</span></span><br><span class="line">gethpoa/</span><br><span class="line">├── blockpoa-harmony.json</span><br><span class="line">├── blockpoa.json</span><br><span class="line">├── bnode</span><br><span class="line">│   └── boot.key</span><br><span class="line">├── node1</span><br><span class="line">│   └── data</span><br><span class="line">│       └── keystore</span><br><span class="line">│           └── UTC--2022-04-07T11-43-40.475412645Z--7adc4a5a65ab33595ade0ed15903e8c406f69230</span><br><span class="line">└── node2</span><br><span class="line">    └── data</span><br><span class="line">        └── keystore</span><br><span class="line">            └── UTC--2022-04-07T08-50-53.751660870Z--0691e168e8cc151a76a04705290702631a86c948</span><br></pre></td></tr></table></figure>
+<p>使用<code>bootnode</code>和刚才生成的<code>boot.key</code>启动引导节点:</p>
+<p>提示信息说<code>bootnode</code>是开发工具，如果是生产环境的话使用一个正常的节点作为引导节点。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> bootnode -nodekey boot.key</span></span><br><span class="line">enode://5b0427c6efd2b8c1e107061527a7bfc39b74ab42db1561f8da8302622b0504d7f3afe3e7ba74b7561ddc00c256d4cacea756ff983080cb78bd8f56fd89959e88@127.0.0.1:0?discport=30301</span><br><span class="line">Note: you&#x27;re using cmd/bootnode, a developer tool.</span><br><span class="line">We recommend using a regular node as bootstrap node for production deployments.</span><br><span class="line">INFO [04-07|17:04:08.597] New local node record                    seq=1,649,322,248,596 id=1ae5556065ce551c ip=&lt;nil&gt; udp=0 tcp=0</span><br></pre></td></tr></table></figure>
+<h3 id="启动成员节点">启动成员节点</h3>
+<p>在<code>node1</code>和<code>node2</code>目录下创建<code>password.txt</code>文件，然后把账户密钥的密码保存到此文件中。然后分别在两个目录下运行下面的命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> node1目录下执行</span></span><br><span class="line"><span class="meta">$</span><span class="bash">geth --datadir data --networkid 3030 --bootnodes enode://5b0427c6efd2b8c1e107061527a7bfc39b74ab42db1561f8da8302622b0504d7f3afe3e7ba74b7561ddc00c256d4cacea756ff983080cb78bd8f56fd89959e88@127.0.0.1:0?discport=30301 --ipcdisable --syncmode full --http --allow-insecure-unlock --http.addr 0.0.0.0 --unlock 0x7adc4a5a65ab33595ade0ed15903e8c406f69230 --password password.txt --mine console</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> node2目录下执行</span></span><br><span class="line">geth --datadir data --networkid 3030 --bootnodes enode://5b0427c6efd2b8c1e107061527a7bfc39b74ab42db1561f8da8302622b0504d7f3afe3e7ba74b7561ddc00c256d4cacea756ff983080cb78bd8f56fd89959e88@127.0.0.1:0?discport=30301 --port 30304 --ipcdisable --syncmode full --http --allow-insecure-unlock --http.addr 0.0.0.0 --http.port 8546 console</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>如果关掉终端之后需要重启网络的话，直接执行上面两个命令即可，不用再启用引导节点</strong></p>
+<h3 id="验证">验证</h3>
+<h4 id="配置matemask">配置matemask</h4>
+<p>配置网络，把刚才生成的账户导入到matemask。</p>
+<h4 id="发送一个交易">发送一个交易</h4>
+<p><img src="https://cdn.jsdelivr.net/gh/guozhe001/oss/image-20220407204329123.png" alt="image-20220407204329123"></p>
+<p>后台日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INFO [04-07|20:41:00.283] Submitted transaction                    hash=0xce38e66cbc6267110fc31a4f07fbfd740c784439ba87666c5fddf1c036136f46 from=0x7adC4A5a65ab33595adE0ed15903e8c406f69230 nonce=0 recipient=0x2560be5793F9AA00963e163A1287807Feb897e2F value=111,000,000,000,000,000,000</span><br></pre></td></tr></table></figure>
+<h4 id="错误处理">错误处理</h4>
+<h5 id="因为没有启用rpcapi接口，因此使用matemask无法配置私有网络">因为没有启用rpcapi接口，因此使用matemask无法配置私有网络</h5>
+<h5 id="解决方法，启用rpcapi功能">解决方法，启用rpcapi功能</h5>
+<p>如果您需要在其他的机器上连此node节点，则命令选项需要添加<code>--http.addr 0.0.0.0</code>选项。</p>
+<p>Do not forget <code>--http.addr 0.0.0.0</code>, if you want to access RPC from other containers and/or hosts. By default, <code>geth</code> binds to the local interface and RPC endpoints are not accessible from the outside.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">geth &lt;other-flags&gt; --http --http.addr 0.0.0.0</span><br></pre></td></tr></table></figure>
+<h5 id="发送ETH失败，日志报错：err-“header-not-found”">发送ETH失败，日志报错：err=“header not found”</h5>
+<p>如果在matemask上面发送ETH之后日志报下面的错误，检查一下网络配置是否正确。我出现这个错误是因为网络ID配置不正确导致。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WARN [04-07|20:39:29.911] Served eth_getTransactionCount           conn=192.168.31.153:64458 reqid=5607614675047                        duration=&quot;84.518µs&quot;  err=&quot;header not found&quot;</span><br></pre></td></tr></table></figure>
+<h5 id="WARN-04-05-14-46-19-861-Block-sealing-failed-err-“signed-recently-must-wait-for-others”">WARN [04-05|14:46:19.861] Block sealing failed                     err=“signed recently, must wait for others”</h5>
+<p>我配置两个节点作为签名节点时报此错误，然后只保留一个签名节点可以正常打包区块也不报次错误了。目前原因尚不清楚。</p>
+<h5 id="Fatal-Account-unlock-with-HTTP-access-is-forbidden">Fatal: Account unlock with HTTP access is forbidden!</h5>
+<p><code>--http</code>和<code>--unlock</code>两个选项不能同时启用，应该是考虑到安全的问题。<br>
+也可以使用<code>--allow-insecure-unlock</code>选项：Allow insecure account unlocking when account-related RPCs are exposed by http。但是生产环境不建议使用此选项。</p>
+<h5 id="错误记录：WARN-04-05-13-28-32-568-Block-sealing-failed-err-“unauthorized-signer”">错误记录：WARN [04-05|13:28:32.568] Block sealing failed                     err=“unauthorized signer”</h5>
+<p>如果运行一个签名的节点时出现上面的错误，可以查看<code>genesis.json</code>文件中的extradata是否包含启动时解锁的用户地址，如果不包含则使用包含的账户地址进行启动签名者节点。</p>
+<h3 id="后续工作">后续工作</h3>
+<p>因为现在启动节点都是在终端执行命令启动的，终端一旦关闭网络也就关了。可以有两种方案：</p>
+<ol>
+<li>使用docker启动</li>
+<li>使用后台运行的方式执行启动命令</li>
+</ol>
+<p>个人更倾向于使用第一种，后面有时间再用docker启动。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/guozhe001">项目</a></li>
+         
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.</span> <span class="toc-text">环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85geth%E7%AD%89%E5%B7%A5%E5%85%B7"><span class="toc-number">1.1.</span> <span class="toc-text">安装geth等工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95"><span class="toc-number">1.2.</span> <span class="toc-text">创建工作目录</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8puppeth%E5%88%9B%E5%BB%BA%E5%88%9B%E4%B8%96%E5%8C%BA%E5%9D%97%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">使用puppeth创建创世区块的配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E5%88%9B%E4%B8%96%E5%8C%BA%E5%9D%97%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">初始化创世区块配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E5%BC%95%E5%AF%BC%E8%8A%82%E7%82%B9"><span class="toc-number">4.</span> <span class="toc-text">启动引导节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E6%88%90%E5%91%98%E8%8A%82%E7%82%B9"><span class="toc-number">5.</span> <span class="toc-text">启动成员节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81"><span class="toc-number">6.</span> <span class="toc-text">验证</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEmatemask"><span class="toc-number">6.1.</span> <span class="toc-text">配置matemask</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%91%E9%80%81%E4%B8%80%E4%B8%AA%E4%BA%A4%E6%98%93"><span class="toc-number">6.2.</span> <span class="toc-text">发送一个交易</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="toc-number">6.3.</span> <span class="toc-text">错误处理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9B%A0%E4%B8%BA%E6%B2%A1%E6%9C%89%E5%90%AF%E7%94%A8rpcapi%E6%8E%A5%E5%8F%A3%EF%BC%8C%E5%9B%A0%E6%AD%A4%E4%BD%BF%E7%94%A8matemask%E6%97%A0%E6%B3%95%E9%85%8D%E7%BD%AE%E7%A7%81%E6%9C%89%E7%BD%91%E7%BB%9C"><span class="toc-number">6.3.1.</span> <span class="toc-text">因为没有启用rpcapi接口，因此使用matemask无法配置私有网络</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95%EF%BC%8C%E5%90%AF%E7%94%A8rpcapi%E5%8A%9F%E8%83%BD"><span class="toc-number">6.3.2.</span> <span class="toc-text">解决方法，启用rpcapi功能</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8F%91%E9%80%81ETH%E5%A4%B1%E8%B4%A5%EF%BC%8C%E6%97%A5%E5%BF%97%E6%8A%A5%E9%94%99%EF%BC%9Aerr-%E2%80%9Cheader-not-found%E2%80%9D"><span class="toc-number">6.3.3.</span> <span class="toc-text">发送ETH失败，日志报错：err&#x3D;“header not found”</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#WARN-04-05-14-46-19-861-Block-sealing-failed-err-%E2%80%9Csigned-recently-must-wait-for-others%E2%80%9D"><span class="toc-number">6.3.4.</span> <span class="toc-text">WARN [04-05|14:46:19.861] Block sealing failed                     err&#x3D;“signed recently, must wait for others”</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Fatal-Account-unlock-with-HTTP-access-is-forbidden"><span class="toc-number">6.3.5.</span> <span class="toc-text">Fatal: Account unlock with HTTP access is forbidden!</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E8%AE%B0%E5%BD%95%EF%BC%9AWARN-04-05-13-28-32-568-Block-sealing-failed-err-%E2%80%9Cunauthorized-signer%E2%80%9D"><span class="toc-number">6.3.6.</span> <span class="toc-text">错误记录：WARN [04-05|13:28:32.568] Block sealing failed                     err&#x3D;“unauthorized signer”</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E7%BB%AD%E5%B7%A5%E4%BD%9C"><span class="toc-number">7.</span> <span class="toc-text">后续工作</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&text=如何搭建一个私有以太坊网络"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&title=如何搭建一个私有以太坊网络"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&is_video=false&description=如何搭建一个私有以太坊网络"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=如何搭建一个私有以太坊网络&body=Check out this article: https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&title=如何搭建一个私有以太坊网络"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&title=如何搭建一个私有以太坊网络"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&title=如何搭建一个私有以太坊网络"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&title=如何搭建一个私有以太坊网络"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&name=如何搭建一个私有以太坊网络&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://guozhe001.github.io/2024/11/22/blockchain/ethereum/how_to/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89%E4%BB%A5%E5%A4%AA%E5%9D%8A%E7%BD%91%E7%BB%9C/&t=如何搭建一个私有以太坊网络"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020-2024
+    guozhe
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/categories/">分类</a></li>
+         
+          <li><a href="/tags/">标签</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/guozhe001">项目</a></li>
+         
+          <li><a href="/search/">搜索</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
